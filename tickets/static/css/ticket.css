@@ -1,0 +1,11 @@
+.dataTables_wrapper .dataTables_length select {
+  width: 70px !important;
+}
+
+.dataTables_length .form-control {
+  margin: 0px !important;
+}
+
+.dataTables_filter .form-control{
+  height: 28px !important;
+}

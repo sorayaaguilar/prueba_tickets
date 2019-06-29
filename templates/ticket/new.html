@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-heading-btn"></div>
+                <h4 class="panel-title">Ticket</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <form id="f-ticket" role="form" action="" method="post">
+                            {% csrf_token %}
+                            <!-- campos -->
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="{{ form.titulo.id_for_label }}">
+                                            {{ form.titulo.label_tag }}
+                                        </label>
+                                        {{ form.titulo }}
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="{{ form.estado.id_for_label }}">
+                                            {{ form.estado.label_tag }}
+                                        </label>
+                                        {{ form.estado }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.descripcion.id_for_label }}">
+                                            {{ form.descripcion.label_tag }}
+                                        </label>
+                                        {{ form.descripcion }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <a class="btn btn-white btn-sm" href="{% url 'tickets:ticket_list'%}">Cancelar</a>
+                                {% if action == 'new' %}
+                                    <button class="btn btn-primary btn-sm ml-2" type="submit">Guardar</button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>
+
+

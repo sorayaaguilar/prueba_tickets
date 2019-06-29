@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-heading-btn"></div>
+                <h4 class="panel-title">Lista de Tickets</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <a href="{% url 'tickets:ticket_new'%}" class="btn btn-white btn-sm"><i class="fa fa-plus"></i> Nuevo</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                      <table id="t-tickets" class="table table-striped table-bordered" style="width: 100%!important"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  	
+<style>
+
+</style>
+{% endblock content %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+    console.log('init')
+
+    tickets = LoadTable.init({
+		'id'         : '#t-tickets',
+		'order'      : [1, 'asc'],
+		'responsive' : true,
+	    'ajax': {
+		        url: "{% url 'tickets:get_ticket'%}",
+		        dataSrc: ''
+		},
+	    'deferRender': true,
+		'buttons': [],
+		'columns': [
+		{
+				'data': 'id',
+				'title': 'ID',
+				'visible': false,
+		},
+		{
+				'data': 'titulo',
+				'title': 'Título',
+				'width': '10%',
+		},
+		{
+				'data': 'descripcion',
+				'title': 'Descripción',
+				'width': '30%',
+		},
+        {
+				'data': 'tiempo_creacion',
+				'title': 'Días Creación',
+				'width': '30%',
+		},
+        {
+				'data': 'opciones',
+				'title': 'Opciones',
+				'width': '30%',
+                'class': 'text-center'
+
+		},
+		],
+		'columnDefs': [
+		    {
+               'targets': [4],
+                render: function (data, type, full, meta) {
+
+                	var btns = '';
+                    btns += '<a class="btn btn-white btn-sm ml-2" href="/tickets/view/'+full.id+'/"><i class="far fa-eye"></i></a>';
+
+                    return btns
+
+                }
+            },
+        ]
+	})
+
+});
+
+var LoadTable = function() {
+    "use strict";
+    return {
+        //main function
+        init: function(config) {
+            var table;
+            var language = {
+                "decimal": "-",
+                "thousands": ".",
+                'emptyTable': 'Sin Datos',
+                'info': 'mostranto _END_ de _TOTAL_ registros',
+                'infoEmpty': '0-0 de 0',
+                'infoFiltered': '',
+                'infoPostFix': '',
+                'lengthMenu': '_MENU_',
+                'loadingRecords': 'Cargando...',
+                'processing': 'Procesando...',
+                'search': '',
+                'searchPlaceholder': 'Buscar',
+                'zeroRecords': 'No se encontraron registros',
+                'paginate': {
+                    'first': 'Primero',
+                    'last': 'Último',
+                    'next': 'Próximo',
+                    'previous': 'Anterior'
+                }
+            };
+
+      var buttons = [
+        {
+          extend: 'excel'
+        },
+        {
+          extend: 'pdf'
+        },
+        // {
+        //   extend: 'print',
+        //   customize: function(win) {
+        //     $(win.document.body).addClass('white-bg');
+        //     $(win.document.body).css('font-size', '10px');
+        //     $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+        //   }
+        // }
+      ];
+
+      if ($.fn.DataTable.isDataTable(config.id)) {
+        table = $(config.id).DataTable();
+        table.destroy();
+        $(config.id).empty()
+      }
+      if (config.structure != undefined && $(config.id).length > 0) {
+        $(config.id).append(config.structure.tfoot)
+      }
+
+      if ($(config.id).length !== 0) {
+        table = $(config.id).DataTable({
+          language: language, // lenguaje
+          data: config.data == null ? false : config.data, // filas
+          ajax: config.ajax == null ? false : config.ajax,
+          deferRender: config.deferRender == null ? false : config.deferRender,
+          order: config.order == null ? [
+            [0, 'asc']
+          ] : config.order, // columna a ordenar
+          info: config.info == null ? true : config.info, // info
+          responsive: config.responsive == null ? true : config.responsive,
+          stateSave: config.stateSave == null ? true: config.stateSave,
+          columns: config.columns == null ? [] : config.columns, // columnas
+          columnDefs: config.columnDefs == null ? [] : config.columnDefs,
+          paginate: config.paginate == null ? true : config.paginate, // paginador
+          pageLength: config.pageLength == null ? 10 : config.pageLength, // elementos a mostar por defecto
+          bLengthChange: config.bLengthChange == null ? true : config.bLengthChange, // elementos a mostrar
+          searching: config.searching == null ? true : config.searching, // buscar
+          ordering: config.ordering == null ? true : config.ordering, // ordenar
+          drawCallback: config.drawCallback == null ? function(){} : config.drawCallback,
+          pagingType: config.pagingType == null ? 'simple_numbers' : config.pagingType,
+          dom: '<"top"lf<"btn-search">B><"form-search">rt<"bottom"ip>',
+          buttons: config.buttons == null ? buttons : config.buttons,
+          footerCallback: config.footerCallback == null ? function() {} : config.footerCallback,
+          // dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+          // buttons: [{
+          //     text: 'CSV',
+          //     extend: 'csv',
+          //     className: 'btn-sm'
+          //   },
+          //   {
+          //     text: 'EXCEL',
+          //     extend: 'excel',
+          //     className: 'btn-sm'
+          //   },
+          //   {
+          //     text: 'PDF',
+          //     extend: 'pdf',
+          //     className: 'btn-sm'
+          //   },
+          //   {
+          //     text: 'Copiar',
+          //     extend: 'copy',
+          //     className: 'btn-sm'
+          //   },
+          //   {
+          //     text: 'Imprimir',
+          //     extend: 'print',
+          //     className: 'btn-sm'
+          //   }
+          // ],
+        });
+      }
+      return table
+    }
+  };
+}();
+
+
+</script>
+{% endblock %}
